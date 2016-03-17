@@ -1,4 +1,4 @@
 packer-templates
 ================
 
-Packer templates for Vagrant boxes
+Packer templates for VMWare  boxes
