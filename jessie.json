@@ -35,12 +35,68 @@
         "memsize": "4096",
         "numvcpus": "2"
       }
+    },
+    {
+        "boot_command": [
+        "<esc><wait>",
+        "install",
+        " auto",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/vagrant-jessie.txt",
+        " debian-installer=en_US",
+        " locale=en_US.UTF-8",
+        " kbd-chooser/method=us<wait>",
+        " keyboard-configuration/layout=USA<wait>",
+        " keyboard-configuration/variant=USA<wait>",
+        " keymap=dk",
+        " netcfg/get_hostname=vagrant",
+        " netcfg/get_domain=vagrantup.com ",
+        "<enter>"
+      ],
+      "disk_size": 25000,
+      "guest_additions_path": "/var/tmp/VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_os_type": "Debian_64",
+      "http_directory": "http",
+      "iso_checksum": "a9b490b4215d1e72e876b031dafa7184",
+      "iso_checksum_type": "md5",
+      "iso_url": "debian-8.3.0-amd64-netinst.iso",
+      "shutdown_command": "echo 'vagrant'|sudo -S shutdown -h now",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "10000s",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "1096"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "1"
+        ]
+      ],
+      "virtualbox_version_file": "/var/tmp/.vbox_version",
+      "vm_name": "debian-jessie64"
+    },
+    {
+      "type": "digitalocean",
+      "api_token": "264cf8d23a0e08bf7fa9843bd77959f014e8b61b6b010e37a1e3be0fb2f272f3",
+      "image": "debian-8-x64",
+      "region": "nyc3",
+      "size": "1gb"
     }
   ],
   "provisioners": [
     {
+
       "override": {
         "vmware-iso": {
+          "execute_command": "echo 'vagrant'|{{.Vars}} sudo -E -S bash '{{.Path}}'"
+        },
+        "virtualbox-iso": {
           "execute_command": "echo 'vagrant'|{{.Vars}} sudo -E -S bash '{{.Path}}'"
         }
       },
@@ -53,6 +109,13 @@
         "script/zerodisk.sh"
       ],
       "type": "shell"
+    }
+  ],
+  "post-processors": [
+    {
+      "keep_input_artifact": false,
+      "output": "./{{.Provider}}/debian-jessie64.box",
+      "type": "vagrant"
     }
   ]
 }
